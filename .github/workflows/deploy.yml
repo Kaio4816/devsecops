@@ -5,8 +5,8 @@
 name: 🚀 Deploy to AWS
 
 on:
-  push:
-    branches: [main]
+  # push:             # Descomente para deploy automático em push 
+  #   branches: [main]  # Descomente para deploy automático em push 
   workflow_dispatch:  # Permite execução manual
 
 env:
