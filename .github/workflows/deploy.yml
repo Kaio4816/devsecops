@@ -45,6 +45,7 @@ jobs:
 
       # Step 4: Build e Push da imagem
       - name: 🐳 Build and push Docker image
+        working-directory: aula01
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
