@@ -1,0 +1,45 @@
+# ============================================
+# WORKFLOW: Security Scanning (SAST + SCA)
+# ============================================
+name: 🔒 Security Scan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fiap-dclt-devsecops-aula03/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'fiap-dclt-devsecops-aula03/**'
+
+jobs:
+  # ============================================
+  # JOB: SAST com Horusec
+  # ============================================
+  horusec:
+    name: 🔍 SAST - Horusec
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Run Horusec
+        uses: fike/horusec-action@v0.2.2
+        with:
+          arguments: >
+            -p ./
+            -o json
+            -O horusec-results.json
+            --ignore-severity LOW
+
+      - name: 📤 Upload Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: horusec-report
+          path: horusec-results.json
+          retention-days: 30

@@ -5,9 +5,11 @@
 name: 🚀 Deploy to AWS
 
 on:
-  # push:             # Descomente para deploy automático em push 
-  #   branches: [main]  # Descomente para deploy automático em push 
-  workflow_dispatch:  # Permite execução manual
+  # push: # Descomente para ativar deploy automático em push
+  #   branches: [main] # Ajuste para sua branch principal
+  #   paths: # Para limitar a execução apenas a mudanças na pasta da aplicação
+  #     - 'fiap-dclt-devsecops-aula01/**' # Ajuste para o caminho da sua aplicação
+  workflow_dispatch:
 
 env:
   AWS_REGION: us-east-1
