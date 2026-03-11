@@ -14,7 +14,6 @@
  * - Eval com input do usuário
  * - Criptografia fraca (MD5)
  * - Bind em todas as interfaces
- * - Commit para pipe automatica
  */
 
 
