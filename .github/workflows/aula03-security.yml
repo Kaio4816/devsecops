@@ -14,14 +14,18 @@ jobs:
   # JOB: Lint Dockerfile com Hadolint
   # ============================================
   hadolint:
-    name: 🔍 Dockerfile Lint
+    name: 🔎 Dockerfile Lint
     runs-on: ubuntu-latest
-    
+
+    defaults:
+      run:
+        working-directory: fiap-dclt-devsecops-aula04
+
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: 🔍 Hadolint
+      - name: 🔎 Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile.secure
