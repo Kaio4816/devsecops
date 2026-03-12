@@ -1,117 +1,28 @@
 # ============================================
-# WORKFLOW: Security Scanning (SAST + SCA)
+# WORKFLOW: Container Security
 # ============================================
-name: 🔒 Security Scan
+name: 🔒 Container Security
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'fiap-dclt-devsecops-aula03/**'
   pull_request:
     branches: [main]
-    paths:
-      - 'fiap-dclt-devsecops-aula03/**'
 
 jobs:
   # ============================================
-  # JOB: SAST com Horusec
+  # JOB: Lint Dockerfile com Hadolint
   # ============================================
-  horusec:
-    name: 🔍 SAST - Horusec
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 🔍 Run Horusec
-        uses: fike/horusec-action@v0.2.2
-        with:
-          arguments: >
-            -p ./
-            -o json
-            -O horusec-results.json
-            --ignore-severity LOW
-
-      - name: 📤 Upload Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: horusec-report
-          path: horusec-results.json
-          retention-days: 30
-
-  # ============================================
-  # JOB: SCA com Trivy
-  # ============================================
-  trivy-sca:
-    name: 🔍 SCA - Trivy
+  hadolint:
+    name: 🔍 Dockerfile Lint
     runs-on: ubuntu-latest
     
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: 🔍 Trivy FS Scan
-        uses: aquasecurity/trivy-action@master
+      - name: 🔍 Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
         with:
-          scan-type: 'fs'
-          scan-ref: 'fiap-dclt-devsecops-aula03/'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'  # Falha se encontrar vulnerabilidades
-
-      - name: 📤 Trivy JSON Report
-        uses: aquasecurity/trivy-action@master
-        if: always()
-        with:
-          scan-type: 'fs'
-          scan-ref: 'fiap-dclt-devsecops-aula03/'
-          format: 'json'
-          output: 'trivy-sca-results.json'
-
-      - name: 📤 Upload Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: trivy-sca-report
-          path: trivy-sca-results.json
-
-  # ============================================
-  # JOB: Gerar SBOM
-  # ============================================
-  sbom:
-    name: 📦 Generate SBOM
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-
-      - name: 📦 Generate SBOM (CycloneDX)
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: 'fiap-dclt-devsecops-aula03/'
-          format: 'cyclonedx'
-          output: 'sbom-cyclonedx.json'
-
-      - name: 📦 Generate SBOM (SPDX)
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: 'fiap-dclt-devsecops-aula03/'
-          format: 'spdx-json'
-          output: 'sbom-spdx.json'
-
-      - name: 📤 Upload SBOMs
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom-reports
-          path: |
-            sbom-cyclonedx.json
-            sbom-spdx.json
-          retention-days: 90
+          dockerfile: Dockerfile.secure
+          failure-threshold: warning
